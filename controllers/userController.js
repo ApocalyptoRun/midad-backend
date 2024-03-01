@@ -93,13 +93,15 @@ const acceptFriendRequest = async (req, res) => {
 const compareContacts = async (req, res) => {
   try {
     const userContacts = req.body.phoneContacts;
+    const loggedInUserId = req.user.id;
 
     const normalizedContacts = userContacts.map((contact) => {
       return contact.replace(/[+\s-]/g, "");
     });
 
     const matchedUsers = await UserModel.find({
-      phoneNumber: { $in: normalizedContacts },
+      _id: { $ne: loggedInUserId },
+      phoneNumber: { $in: normalizedContacts }
     });
 
     res.json(matchedUsers);
