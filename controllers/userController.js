@@ -52,7 +52,7 @@ const getFriendRequests = async (req, res) => {
     const { id } = req.user;
 
     const user = await UserModel.findById(id)
-      .populate("friendRequests", "firstName phoneNumber imageUrl")
+      .populate("friendRequests", "firstName imageUrl email")
       .lean();
 
     const friendRequests = user.friendRequests;
@@ -63,9 +63,56 @@ const getFriendRequests = async (req, res) => {
   }
 };
 
+const acceptFriendRequest = async (req, res) => {
+  try {
+    const recepientId = req.user.id;
+    const { senderId } = req.body;
+
+    const sender = await UserModel.findById(senderId);
+    const recepient = await UserModel.findById(recepientId);
+
+    sender.friends.push(recepientId);
+    recepient.friends.push(senderId);
+
+    recepient.friendRequests = recepient.friendRequests.filter(
+      (request) => request.toString() !== senderId.toString()
+    );
+    sender.sentFriendsRequests = sender.sentFriendsRequests.filter(
+      (request) => request.toString() !== recepientId.toString()
+    );
+
+    await sender.save();
+    await recepient.save();
+
+    res.status(200).json({ message: "friend Request accepted Successfylly " });
+  } catch (error) {
+    console.log(`Error acceptieng friend request ${error}`);
+  }
+};
+
+const compareContacts = async (req, res) => {
+  try {
+    const userContacts = req.body.phoneContacts;
+
+    const normalizedContacts = userContacts.map((contact) => {
+      return contact.replace(/[+\s-]/g, "");
+    });
+
+    const matchedUsers = await UserModel.find({
+      phoneNumber: { $in: normalizedContacts },
+    });
+
+    res.json(matchedUsers);
+  } catch (error) {
+    console.error(`Error comparing contacts ${error}`);
+  }
+};
+
 export default {
   updateUserDetails,
   getUsers,
   postFriendRequest,
   getFriendRequests,
+  acceptFriendRequest,
+  compareContacts,
 };
