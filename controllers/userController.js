@@ -28,68 +28,6 @@ const getUsers = (req, res) => {
     });
 };
 
-const postFriendRequest = async (req, res) => {
-  const currentUserId = req.user.id;
-  const { selectedUserId } = req.body;
-
-  try {
-    await UserModel.findByIdAndUpdate(selectedUserId, {
-      $push: { friendRequests: currentUserId },
-    });
-
-    await UserModel.findByIdAndUpdate(currentUserId, {
-      $push: { sentFriendsRequests: selectedUserId },
-    });
-
-    res.sendStatus(200);
-  } catch (error) {
-    console.log(`Sending friend request error ${error}`);
-  }
-};
-
-const getFriendRequests = async (req, res) => {
-  try {
-    const { id } = req.user;
-
-    const user = await UserModel.findById(id)
-      .populate("friendRequests", "firstName imageUrl email")
-      .lean();
-
-    const friendRequests = user.friendRequests;
-
-    res.json(friendRequests);
-  } catch (error) {
-    console.log(`Errot getting friend request ${error}`);
-  }
-};
-
-const acceptFriendRequest = async (req, res) => {
-  try {
-    const recepientId = req.user.id;
-    const { senderId } = req.body;
-
-    const sender = await UserModel.findById(senderId);
-    const recepient = await UserModel.findById(recepientId);
-
-    sender.friends.push(recepientId);
-    recepient.friends.push(senderId);
-
-    recepient.friendRequests = recepient.friendRequests.filter(
-      (request) => request.toString() !== senderId.toString()
-    );
-    sender.sentFriendsRequests = sender.sentFriendsRequests.filter(
-      (request) => request.toString() !== recepientId.toString()
-    );
-
-    await sender.save();
-    await recepient.save();
-
-    res.status(200).json({ message: "friend Request accepted Successfylly " });
-  } catch (error) {
-    console.log(`Error acceptieng friend request ${error}`);
-  }
-};
-
 const compareContacts = async (req, res) => {
   try {
     const userContacts = req.body.phoneContacts;
@@ -101,7 +39,7 @@ const compareContacts = async (req, res) => {
 
     const matchedUsers = await UserModel.find({
       _id: { $ne: loggedInUserId },
-      phoneNumber: { $in: normalizedContacts }
+      phoneNumber: { $in: normalizedContacts },
     });
 
     res.json(matchedUsers);
@@ -113,8 +51,5 @@ const compareContacts = async (req, res) => {
 export default {
   updateUserDetails,
   getUsers,
-  postFriendRequest,
-  getFriendRequests,
-  acceptFriendRequest,
   compareContacts,
 };
