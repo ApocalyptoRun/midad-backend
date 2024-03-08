@@ -35,7 +35,7 @@ const addMessage = async (req, res) => {
       timestamp: new Date(),
       imageUrl:
         messageType === "image"
-          ? req.file.path
+          ? `${req.protocol}://${req.get('host')}/files/${req.file.filename}`
           : null,
     });
 
