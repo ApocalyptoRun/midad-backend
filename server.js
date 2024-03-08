@@ -8,11 +8,15 @@ import cors from "cors";
 import { router as authRouter } from "./routes/authRoute.js";
 import { router as userRouter } from "./routes/userRoute.js";
 import { router as messageRouter } from "./routes/messageRoute.js";
+//import path from "path";
 
+//const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+//app.use('/files', express.static(path.join(__dirname, 'files')));
 
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
@@ -45,9 +49,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send-msg", (data) => {
-    const sendUserSocket = onlineUsers.get(data.to);
+    const sendUserSocket = onlineUsers.get(data.recepientId);
     if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("msg-receive", data.message);
+      socket.to(sendUserSocket).emit("msg-receive", data);
     }
   });
 });

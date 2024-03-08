@@ -1,16 +1,21 @@
 import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
-  message: {
-    text: { type: String, required: true },
-  },
-  users: Array,
-  sender: {
+  senderId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
   },
-  timestamp: {
+  recepientId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  messageType: {
+    type: String,
+    enum: ["text", "image"],
+  },
+  message: { type: String },
+  imageUrl: { type: String },
+  timeStamp: {
     type: Date,
     default: Date.now,
   },

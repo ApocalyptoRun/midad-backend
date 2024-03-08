@@ -1,77 +1,49 @@
-import axios from "axios";
-import { UserModel } from "../models/userModel.js";
 import { messageModel } from "../models/messageModel.js";
-
-const addMessage = async (req, res) => {
-  try {
-    const from = req.user.id;
-    const { to, message } = req.body;
-
-    const data = await messageModel.create({
-      message: { text: message },
-      users: [from, to],
-      sender: from,
-    });
-
-    if (!data) {
-      return res.json({ msg: "Erro adding message to database !" });
-    }
-
-    return res.status(201).send({ msg: "Message added successfully !" });
-  } catch (error) {
-    console.log(`Error adding Message ${error.response}`);
-  }
-};
 
 const getAllMessage = async (req, res) => {
   try {
-    const from = req.user.id;
-    const { to } = req.body;
-
-    /*      const messages = await messageModel.aggregate([
-      {
-        $match: {
-          users: { $all: [from, to] },
-        },
-      },
-      {
-        $addFields: {
-          fromSelf: { $eq: ["$sender", from] },
-          message: "$message.text",
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          fromSelf: 1,
-          message: 1,
-        },
-      },
-      {
-        $sort: {
-          updatedAt: 1,
-        },
-      },
-    ]); */
+    const senderId = req.user.id;
+    const { recepientId } = req.body;
 
     const messages = await messageModel
       .find({
-        users: { $all: [from, to] },
+        $or: [
+          { senderId: senderId, recepientId: recepientId },
+          { senderId: recepientId, recepientId: senderId },
+        ],
       })
-      .sort({
-        udatedAt: 1,
-      });
+      .populate("senderId", "_id firstName");
 
-    const msgs = messages.map((msg) => {
-      return {
-        fromSelf: msg.sender.toString() === from,
-        message: msg.message.text,
-      };
+    res.json(messages);
+  } catch (error) {
+    console.log(`Error adding message ${error}`);
+  }
+};
+
+const addMessage = async (req, res) => {
+  try {
+    const senderId = req.user.id;
+    const { recepientId, messageType, messageText } = req.body;
+
+    console.log(req.file);
+
+    const newMessage = new messageModel({
+      senderId,
+      recepientId,
+      messageType,
+      message: messageText,
+      timestamp: new Date(),
+      imageUrl:
+        messageType === "image"
+          ? req.file.path
+          : null,
     });
 
-    res.json(msgs);
+    await newMessage.save();
+    await newMessage.populate("senderId", "_id firstName");
+    res.status(200).json(newMessage);
   } catch (error) {
-    console.log(`Error getting Messages ${error}`);
+    console.log(`Error adding message ${error}`);
   }
 };
 
