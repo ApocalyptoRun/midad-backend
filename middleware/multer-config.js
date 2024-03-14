@@ -1,15 +1,14 @@
 import multer from "multer";
-import path from "path";
-
-const MIME_TYPES = {
-  "image/jpg": "jpg",
-  "image/jpeg": "jpeg",
-  "image/png": "png",
-};
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "files/");
+    if (file.mimetype.startsWith("image")) {
+      cb(null, "uploads/images");
+    } else if (file.mimetype.startsWith("audio")) {
+      cb(null, "uploads/audio");
+    } else {
+      cb({ message: "Unsupported file type" }, false);
+    }
   },
   filename: (req, file, cb) => {
     console.log(file);

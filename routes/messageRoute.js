@@ -5,6 +5,5 @@ import upload from '../middleware/multer-config.js';
 
 export const router = express.Router();
 
-router.post("/addMessage", validateToken, upload.single("imageFile"), messageController.addMessage);
-
+router.post("/addMessage", validateToken, upload.single("file"), messageController.addMessage);
 router.post("/messages", validateToken, messageController.getAllMessage);

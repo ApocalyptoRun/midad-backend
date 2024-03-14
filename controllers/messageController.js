@@ -25,18 +25,22 @@ const addMessage = async (req, res) => {
     const senderId = req.user.id;
     const { recepientId, messageType, messageText } = req.body;
 
-    console.log(req.file);
-
     const newMessage = new messageModel({
       senderId,
       recepientId,
       messageType,
       message: messageText,
       timestamp: new Date(),
-      imageUrl:
-        messageType === "image"
-          ? `${req.protocol}://${req.get('host')}/files/${req.file.filename}`
-          : null,
+      imageUrl: (() => {
+        switch (messageType) {
+          case "image":
+            return `${req.protocol}://${req.get("host")}/uploads/images/${req.file.filename}`;
+          case "audio":
+            return `${req.protocol}://${req.get("host")}/uploads/audio/${req.file.filename}`;
+          case "text":
+            return null;
+        }
+      })(),
     });
 
     await newMessage.save();
