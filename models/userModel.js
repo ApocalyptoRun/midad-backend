@@ -7,32 +7,12 @@ const userSchema = mongoose.Schema({
   lastName: {
     type: String,
   },
-  email: {
+  imageUrl: {
     type: String,
-    unique: true,
   },
-  imageUrl: { type: String },
   phoneNumber: {
     type: Number,
   },
-  friends: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-  friendRequests: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-  sentFriendsRequests: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
 });
 
 export const UserModel = mongoose.model("User", userSchema);

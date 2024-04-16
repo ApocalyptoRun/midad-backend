@@ -2,16 +2,22 @@ import { UserModel } from "../models/userModel.js";
 
 const updateUserDetails = async (req, res) => {
   const { id } = req.user;
+  const { firstName } = req.body;
+  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/images/${
+    req.file.filename
+  }`;
 
-  const result = await UserModel.findByIdAndUpdate(id, req.body, { new: true });
+  const result = await UserModel.findByIdAndUpdate(
+    id,
+    { firstName, imageUrl },
+    { new: true }
+  );
 
   if (!result) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  return res
-    .status(200)
-    .send({ message: "User updated successfully", data: result });
+  return res.status(200).json({ message: "User updated successfully" });
 };
 
 const getUsers = (req, res) => {
@@ -33,13 +39,15 @@ const compareContacts = async (req, res) => {
     const loggedInUserId = req.user.id;
 
     const normalizedContacts = userContacts.map((contact) => {
-      return contact.replace(/[+\s-]/g, "");
+      return contact.replace(/[()+\s-]|^00/g, "");
     });
 
     const matchedUsers = await UserModel.find({
       _id: { $ne: loggedInUserId },
       phoneNumber: { $in: normalizedContacts },
     });
+
+    console.log(matchedUsers);
 
     res.json(matchedUsers);
   } catch (error) {

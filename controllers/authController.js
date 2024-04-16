@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { sendSms, generateOPT } from "../utils/functions.js";
+import { sendSms, generateOPT, sendSmsTwilio } from "../utils/functions.js";
 import { UserModel } from "../models/userModel.js";
 
 let existingOTP, user;
@@ -14,6 +14,8 @@ const sendOTP = async (req, res) => {
   }
 
   existingOTP = generateOPT();
+  
+  sendSmsTwilio(phoneNumber, existingOTP);
 
   user = existingUser ? existingUser : new UserModel({ phoneNumber });
 
