@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
   lastName: {
     type: String,
   },
-  imageUrl: {
+  profilePhoto: {
     type: String,
   },
   phoneNumber: {

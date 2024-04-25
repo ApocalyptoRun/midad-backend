@@ -1,4 +1,6 @@
+import { fileURLToPath } from "url";
 import { messageModel } from "../models/messageModel.js";
+import path from "path";
 
 const getAllMessage = async (req, res) => {
   try {
@@ -25,6 +27,10 @@ const addMessage = async (req, res) => {
     const senderId = req.user.id;
     const { recepientId, messageType, messageText } = req.body;
 
+    if (!req.file && messageType !== "text") {
+      return res.status(400).send({ message: "Please upload a file" });
+    }
+
     const newMessage = new messageModel({
       senderId,
       recepientId,
@@ -37,6 +43,8 @@ const addMessage = async (req, res) => {
             return `${req.protocol}://${req.get("host")}/uploads/images/${req.file.filename}`;
           case "audio":
             return `${req.protocol}://${req.get("host")}/uploads/audio/${req.file.filename}`;
+          case "document":
+            return `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
           case "text":
             return null;
         }
@@ -51,7 +59,9 @@ const addMessage = async (req, res) => {
   }
 };
 
+
 export default {
   addMessage,
   getAllMessage,
 };
+

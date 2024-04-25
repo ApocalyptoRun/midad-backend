@@ -7,11 +7,12 @@ const storage = multer.diskStorage({
     } else if (file.mimetype.startsWith("audio")) {
       cb(null, "uploads/audio");
     } else {
-      cb({ message: "Unsupported file type" }, false);
+      //cb({ message: "Unsupported file type" }, false);
+      cb(null, "uploads/")
     }
   },
   filename: (req, file, cb) => {
-    // console.log(file);
+    console.log(file);
     cb(null, Date.now() + "-" + file.originalname);
   },
 });

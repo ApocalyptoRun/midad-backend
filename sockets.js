@@ -21,5 +21,39 @@ export const setupSockets = (server) => {
         socket.to(sendUserSocket).emit("msg-receive", data);
       }
     });
+
+    socket.on("join", (roomName) => {
+      var rooms = io.sockets.adapter.rooms;
+      var room = rooms.get(roomName);
+
+      if (room == undefined) {
+        socket.join(roomName);
+        socket.emit("created");
+      } else if (room.size === 1) {
+        socket.join(roomName);
+        socket.emit("joined");
+      } else {
+        socket.emit("full")
+      }
+      console.log(rooms);
+    });
+
+    socket.on("ready", (roomName) => {
+      socket.broadcast.to(roomName).emit("ready");
+    });
+
+    socket.on("candidate", (candidate, roomName) => {
+      socket.broadcast.to(roomName).emit("candidate", candidate);
+    });
+
+    
+    socket.on("offer", (offer, roomName) => {
+      socket.broadcast.to(roomName).emit("offer", offer);
+    });
+    
+    socket.on("answer", (answer, roomName) => {
+      socket.broadcast.to(roomName).emit("answer", answer);
+    });
+
   });
-}
+};

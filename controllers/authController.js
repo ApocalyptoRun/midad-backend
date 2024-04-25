@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
-import { sendSms, generateOPT, sendSmsTwilio } from "../utils/functions.js";
+import { generateOPT } from "../utils/functions.js";
 import { UserModel } from "../models/userModel.js";
+import { sendSmsVonage } from "../utils/sendSmsVonage.js";
 
 let existingOTP, user;
 
@@ -15,7 +16,7 @@ const sendOTP = async (req, res) => {
 
   existingOTP = generateOPT();
   
-  sendSmsTwilio(phoneNumber, existingOTP);
+  sendSmsVonage(phoneNumber, existingOTP)
 
   user = existingUser ? existingUser : new UserModel({ phoneNumber });
 
@@ -52,7 +53,7 @@ const signin = async (req, res) => {
       },
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "24h" }
+    { expiresIn: "365d" }
   );
 
   return res.status(200).json({ accessToken });

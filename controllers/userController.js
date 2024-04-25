@@ -1,15 +1,15 @@
 import { UserModel } from "../models/userModel.js";
 
-const updateUserDetails = async (req, res) => {
+const updateUserProfile = async (req, res) => {
   const { id } = req.user;
   const { firstName } = req.body;
-  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/images/${
+  const profilePhoto = `${req.protocol}://${req.get("host")}/uploads/images/${
     req.file.filename
   }`;
 
   const result = await UserModel.findByIdAndUpdate(
     id,
-    { firstName, imageUrl },
+    { firstName, profilePhoto },
     { new: true }
   );
 
@@ -56,7 +56,7 @@ const compareContacts = async (req, res) => {
 };
 
 export default {
-  updateUserDetails,
+  updateUserProfile,
   getUsers,
   compareContacts,
 };

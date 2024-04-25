@@ -9,4 +9,4 @@ router.get("/users", validateToken, userController.getUsers);
 
 router.post("/compareContacts", validateToken, userController.compareContacts);
 
-router.put("/update", validateToken, upload.single("file"), userController.updateUserDetails);
+router.put("/updateProfile", validateToken, upload.single("file"), userController.updateUserProfile);
