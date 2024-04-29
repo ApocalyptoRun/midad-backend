@@ -15,8 +15,9 @@ const sendOTP = async (req, res) => {
   }
 
   existingOTP = generateOPT();
-  
-  sendSmsVonage(phoneNumber, existingOTP)
+
+  console.log("OTP :", existingOTP);
+  //sendSmsVonage(phoneNumber, existingOTP);
 
   user = existingUser ? existingUser : new UserModel({ phoneNumber });
 
@@ -60,12 +61,12 @@ const signin = async (req, res) => {
 };
 
 const authenticateToken = (req, res) => {
-  res.json(req.user)
-}
+  res.json(req.user);
+};
 
 export default {
   sendOTP,
   signin,
   verifyOTP,
-  authenticateToken
+  authenticateToken,
 };

@@ -7,6 +7,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import { setupSockets } from "./sockets.js";
+import swaggerDocs from "./utils/swagger.js";
 
 import { router as authRouter } from "./routes/authRoute.js";
 import { router as userRouter } from "./routes/userRoute.js";
@@ -34,6 +35,7 @@ await mongoose
 
 const server = app.listen(process.env.PORT, () => {
   console.log(`The app is running on port : ${process.env.PORT}`);
-});
 
-setupSockets(server);
+  swaggerDocs(app, process.env.PORT);
+  setupSockets(server);
+});
