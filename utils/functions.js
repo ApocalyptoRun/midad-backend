@@ -27,7 +27,7 @@ export const sendSmsTwilio = (phoneNumber, otp) => {
 export const sendSms = (phoneNumber, otp) => {
   const url = "https://6g62gz.api.infobip.com/sms/2/text/advanced";
   const headers = {
-    Authorization: "App " + process.env.API_KEY,
+    Authorization: "App " + process.env.INFOBIP_KEY,
     "Content-Type": "application/json",
     Accept: "application/json",
   };

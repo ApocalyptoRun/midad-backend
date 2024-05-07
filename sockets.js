@@ -1,9 +1,9 @@
 import { Server } from "socket.io";
 
-export const setupSockets = (server) => {
+export const setupSockets = (server, db) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:8887",
+      origin: "http://localhost:3030",
       credentials: true,
     },
   });
@@ -11,7 +11,7 @@ export const setupSockets = (server) => {
   const onlineUsers = new Map();
 
   io.on("connection", (socket) => {
-    
+
     /**
      * @swagger
      * 'add-user':
@@ -54,9 +54,11 @@ export const setupSockets = (server) => {
       var room = rooms.get(roomName);
 
       if (room == undefined) {
+        console.log("created");
         socket.join(roomName);
         socket.emit("created");
       } else if (room.size === 1) {
+        console.log("joined");
         socket.join(roomName);
         socket.emit("joined");
       } else {
@@ -66,7 +68,6 @@ export const setupSockets = (server) => {
     });
 
     socket.on("ready", (roomName) => {
-      console.log("ready");
       socket.broadcast.to(roomName).emit("ready");
     });
 

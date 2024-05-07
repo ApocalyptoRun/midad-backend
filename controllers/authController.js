@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { generateOPT } from "../utils/functions.js";
+import { generateOPT, sendSms } from "../utils/functions.js";
 import { UserModel } from "../models/userModel.js";
 import { sendSmsVonage } from "../utils/sendSmsVonage.js";
 
@@ -17,7 +17,7 @@ const sendOTP = async (req, res) => {
   existingOTP = generateOPT();
 
   console.log("OTP :", existingOTP);
-  //sendSmsVonage(phoneNumber, existingOTP);
+  sendSms(phoneNumber, existingOTP)
 
   user = existingUser ? existingUser : new UserModel({ phoneNumber });
 
