@@ -27,6 +27,7 @@ trash
 .rvmrc
 .trashes
 *~
+package-lock.json
 
 # Gatsby related
 .cache/
