@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import { generateOPT, sendSms } from "../utils/functions.js";
 import { UserModel } from "../models/userModel.js";
-import { sendSmsVonage } from "../utils/sendSmsVonage.js";
 
 let existingOTP, user;
 

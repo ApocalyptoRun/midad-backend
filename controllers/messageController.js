@@ -1,6 +1,4 @@
-import { fileURLToPath } from "url";
 import { messageModel } from "../models/messageModel.js";
-import path from "path";
 
 const getAllMessage = async (req, res) => {
   try {
@@ -29,8 +27,10 @@ const addMessage = async (req, res) => {
 
     if (!req.file && messageType !== "text") {
       return res.status(400).send({ message: "Please upload a file" });
-    }
+    } 
 
+    console.log("host: ", req.get("host"));
+    
     const newMessage = new messageModel({
       senderId,
       recepientId,
