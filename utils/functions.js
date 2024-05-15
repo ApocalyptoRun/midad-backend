@@ -15,7 +15,7 @@ export const sendSms = (phoneNumber, otp) => {
       {
         destinations: [{ to: phoneNumber }],
         from: "Midad",
-        text: `Your verication code is : ${otp}`,
+        text: `Your verication code is : ${otp} xLL+eizZw70`,
       },
     ],
   };

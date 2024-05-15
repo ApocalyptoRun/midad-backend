@@ -28,6 +28,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 var db = await mongoose.connect(process.env.MONGODB_URL);
 
+const userChangeStream = mongoose.connection.collection('users').watch();
+
 db.connection.on("error", () => {
   console.log("MongoDB connection error:", error)
 });
@@ -42,5 +44,5 @@ const server = app.listen(process.env.PORT, () => {
   console.log(`The app is running on port : ${process.env.PORT}`);
 
   swaggerDocs(app, process.env.PORT);
-  setupSockets(server);
+  setupSockets(server, userChangeStream);
 });

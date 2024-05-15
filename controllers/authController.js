@@ -16,7 +16,7 @@ const sendOTP = async (req, res) => {
   existingOTP = generateOPT();
 
   console.log("OTP :", existingOTP);
-  sendSms(phoneNumber, existingOTP)
+  sendSms(phoneNumber, existingOTP)  
 
   user = existingUser ? existingUser : new UserModel({ phoneNumber });
 

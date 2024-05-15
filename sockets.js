@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 
-export const setupSockets = (server, db) => {
+export const setupSockets = (server, userChangeStream) => {
   const io = new Server(server, {
     cors: {
       origin: "http://localhost:3030",
@@ -49,41 +49,22 @@ export const setupSockets = (server, db) => {
       }
     });
 
-    socket.on("join", (roomName) => {
-      var rooms = io.sockets.adapter.rooms;
-      var room = rooms.get(roomName);
+   
+    userChangeStream.on('change', (change) => {
+      console.log(change)
+      socket.emit('userChange', 'hasChanged');
+    });
 
-      if (room == undefined) {
-        console.log("created");
-        socket.join(roomName);
-        socket.emit("created");
-      } else if (room.size === 1) {
-        console.log("joined");
-        socket.join(roomName);
-        socket.emit("joined");
-      } else {
-        socket.emit("full");
+    socket.on("typing", (data) => {
+      console.log(data)
+      const recipientSocket = onlineUsers.get(data.recipientId);
+      if (recipientSocket) {
+        socket.to(recipientSocket).emit("typing", {
+          senderId: data.senderId,
+          isTyping: data.isTyping,
+        });
       }
-      console.log(rooms);
     });
 
-    socket.on("ready", (roomName) => {
-      socket.broadcast.to(roomName).emit("ready");
-    });
-
-    socket.on("candidate", (candidate, roomName) => {
-      console.log("candidate");
-      socket.broadcast.to(roomName).emit("candidate", candidate);
-    });
-
-    socket.on("offer", (offer, roomName) => {
-      console.log("offer");
-      socket.broadcast.to(roomName).emit("offer", offer);
-    });
-
-    socket.on("answer", (answer, roomName) => {
-      console.log("answer");
-      socket.broadcast.to(roomName).emit("answer", answer);
-    });
   });
 };

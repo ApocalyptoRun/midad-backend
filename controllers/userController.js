@@ -1,17 +1,13 @@
 import { UserModel } from "../models/userModel.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const updateUserProfile = async (req, res) => {
   const { id } = req.user;
   const { firstName } = req.body;
-  const profilePhoto = `${req.protocol}://${req.get("host")}/uploads/images/${
-    req.file.filename
-  }`;
+  const profilePhoto = `https://${process.env.PROD_HOST}/uploads/images/${req.file.filename}`;
 
-  const result = await UserModel.findByIdAndUpdate(
-    id,
-    { firstName, profilePhoto },
-    { new: true }
-  );
+  const result = await UserModel.findByIdAndUpdate(id, { firstName, profilePhoto }, { new: true });
 
   if (!result) {
     return res.status(404).json({ message: "User not found" });
@@ -39,7 +35,7 @@ const compareContacts = async (req, res) => {
     const loggedInUserId = req.user.id;
 
     const normalizedContacts = userContacts.map((contact) => {
-      return contact.replace(/[()+\s-]|^00/g, "");
+      return contact.replace(/\D/g, "");
     });
 
     const matchedUsers = await UserModel.find({

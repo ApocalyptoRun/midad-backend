@@ -1,4 +1,6 @@
 import { messageModel } from "../models/messageModel.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const getAllMessage = async (req, res) => {
   try {
@@ -29,8 +31,6 @@ const addMessage = async (req, res) => {
       return res.status(400).send({ message: "Please upload a file" });
     } 
 
-    console.log("host: ", req.get("host"));
-    
     const newMessage = new messageModel({
       senderId,
       recepientId,
@@ -40,11 +40,11 @@ const addMessage = async (req, res) => {
       imageUrl: (() => {
         switch (messageType) {
           case "image":
-            return `${req.protocol}://${req.get("host")}/uploads/images/${req.file.filename}`;
+            return `https://${process.env.PROD_HOST}/uploads/images/${req.file.filename}`;
           case "audio":
-            return `${req.protocol}://${req.get("host")}/uploads/audio/${req.file.filename}`;
+            return `https://${process.env.PROD_HOST}/uploads/audio/${req.file.filename}`;
           case "document":
-            return `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+            return `https://${process.env.PROD_HOST}/uploads/${req.file.filename}`;
           case "text":
             return null;
         }
