@@ -11,7 +11,6 @@ export const setupSockets = (server, userChangeStream) => {
   const onlineUsers = new Map();
 
   io.on("connection", (socket) => {
-
     /**
      * @swagger
      * 'add-user':
@@ -27,6 +26,18 @@ export const setupSockets = (server, userChangeStream) => {
      */
     socket.on("add-user", (userId) => {
       onlineUsers.set(userId, socket.id);
+    });
+
+    socket.on("typing", (data) => {
+      if (onlineUsers.has(data.recipientId)) {
+        const recipientSocketId = onlineUsers.get(data.recipientId);
+        socket.to(recipientSocketId).emit("typing", {
+          senderId: data.senderId,
+          isTyping: data.isTyping,
+        });
+      } else {
+        console.log("Recipient not found in onlineUsers map");
+      }
     });
 
     /**
@@ -49,22 +60,9 @@ export const setupSockets = (server, userChangeStream) => {
       }
     });
 
-   
-    userChangeStream.on('change', (change) => {
-      console.log(change)
-      socket.emit('userChange', 'hasChanged');
-    });
-
-    socket.on("typing", (data) => {
-      console.log(data)
-      const recipientSocket = onlineUsers.get(data.recipientId);
-      if (recipientSocket) {
-        socket.to(recipientSocket).emit("typing", {
-          senderId: data.senderId,
-          isTyping: data.isTyping,
-        });
-      }
-    });
-
+    // userChangeStream.on('change', (change) => {
+    //   console.log(change)
+    //   socket.emit('userChange', 'hasChanged');
+    // });
   });
 };
