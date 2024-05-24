@@ -5,9 +5,15 @@ dotenv.config();
 const updateUserProfile = async (req, res) => {
   const { id } = req.user;
   const { firstName } = req.body;
-  const profilePhoto = `https://${process.env.PROD_HOST}/uploads/images/${req.file.filename}`;
 
-  const result = await UserModel.findByIdAndUpdate(id, { firstName, profilePhoto }, { new: true });
+  const updateData = { firstName };
+  if (req.file) {
+    updateData.profilePhoto = `https://${process.env.PROD_HOST}/backend/uploads/images/${req.file.filename}`;
+  }
+
+  const result = await UserModel.findByIdAndUpdate(id, updateData, {
+    new: true,
+  });
 
   if (!result) {
     return res.status(404).json({ message: "User not found" });

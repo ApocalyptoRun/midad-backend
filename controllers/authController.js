@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
-import { generateOPT, sendSms } from "../utils/functions.js";
+import {  generateOPT, sendSms } from "../utils/functions.js";
 import { UserModel } from "../models/userModel.js";
 
-let existingOTP, user;
+let user;
+let otpAndPhoneNumberMap = new Map();
 
 const sendOTP = async (req, res) => {
   let exist = false;
@@ -13,10 +14,13 @@ const sendOTP = async (req, res) => {
     exist = true;
   }
 
-  existingOTP = generateOPT();
+  const existingOTP = generateOPT();
+  if (existingOTP) {
+    otpAndPhoneNumberMap.set(phoneNumber, existingOTP);
+  }
 
   console.log("OTP :", existingOTP);
-  sendSms(phoneNumber, existingOTP)  
+  sendSms(phoneNumber, existingOTP)
 
   user = existingUser ? existingUser : new UserModel({ phoneNumber });
 
@@ -24,15 +28,22 @@ const sendOTP = async (req, res) => {
 };
 
 const verifyOTP = async (req, res) => {
-  const { OTP } = req.body;
+  const { OTP, phoneNumber } = req.body;
 
-  if (existingOTP !== OTP) {
-    return res.status(400).json({ msg: "Incorrect OTP" });
+  if (otpAndPhoneNumberMap.has(phoneNumber)) {
+    const existingOTP = otpAndPhoneNumberMap.get(phoneNumber);
+    if (existingOTP) {
+      if (existingOTP !== OTP) {
+        return res.status(400).json({ msg: "Incorrect OTP" });
+      }
+
+      user = await user.save();
+
+      return res.status(201).send(user);
+    }
+  } else {
+    return res.status(400).json({ msg: "Phone Number not found !" });
   }
-
-  user = await user.save();
-
-  return res.status(201).send(user);
 };
 
 const signin = async (req, res) => {

@@ -15,10 +15,12 @@ export const sendSms = (phoneNumber, otp) => {
       {
         destinations: [{ to: phoneNumber }],
         from: "Midad",
-        text: `Your verication code is : ${otp} xLL+eizZw70`,
+        text: `Your verication code is : ${otp} 1yjtxcLngVz`,
       },
     ],
   };
+
+  // debug hash : xLL+eizZw70
 
   axios
     .post(url, messageData, { headers })
@@ -31,5 +33,6 @@ export const sendSms = (phoneNumber, otp) => {
 };
 
 export const generateOPT = () => {
-  return Math.floor(1000 + Math.random() * 9000).toString();
+  return Math.floor(100000 + Math.random() * 900000).toString();
 };
+

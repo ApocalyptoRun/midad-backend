@@ -31,24 +31,26 @@ const addMessage = async (req, res) => {
       return res.status(400).send({ message: "Please upload a file" });
     } 
 
+    const imageUrl = (() => {
+      switch (messageType) {
+        case "image":
+          return `https://${process.env.PROD_HOST}/backend/uploads/images/${req.file.filename}`;
+        case "audio":
+          return `https://${process.env.PROD_HOST}/backend/uploads/audio/${req.file.filename}`;
+        case "document":
+          return `https://${process.env.PROD_HOST}/backend/uploads/${req.file.filename}`;
+        default:
+          return null;
+      }
+    })();
+
     const newMessage = new messageModel({
       senderId,
       recepientId,
       messageType,
       message: messageText,
       timestamp: new Date(),
-      imageUrl: (() => {
-        switch (messageType) {
-          case "image":
-            return `https://${process.env.PROD_HOST}/uploads/images/${req.file.filename}`;
-          case "audio":
-            return `https://${process.env.PROD_HOST}/uploads/audio/${req.file.filename}`;
-          case "document":
-            return `https://${process.env.PROD_HOST}/uploads/${req.file.filename}`;
-          case "text":
-            return null;
-        }
-      })(),
+      imageUrl,
     });
 
     await newMessage.save();
