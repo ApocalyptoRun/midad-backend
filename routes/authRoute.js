@@ -46,8 +46,12 @@ router.post("/sendOTP", authController.sendOTP);
  *                  OTP:
  *                      type: string
  *                      description: The opt sent by sms
+ *                  phoneNumber:
+ *                      type: string
+ *                      description: phone number who receive otp
  *              required:
  *                  - OTP
+ *                  - phoneNumber
  *     responses:
  *       200:
  *         description: opt in sms matched existing otp

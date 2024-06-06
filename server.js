@@ -5,7 +5,6 @@ dotenv.config();
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import { setupSockets } from "./sockets.js";
 import swaggerDocs from "./utils/swagger.js";
 
 import { router as authRouter } from "./routes/authRoute.js";
@@ -41,5 +40,5 @@ if (mongoose.connection.readyState === 1) {
 const server = app.listen(process.env.PORT, () => {
   console.log(`The app is running on port : ${process.env.PORT}`);
 
-  //swaggerDocs(app, process.env.PORT);
+  swaggerDocs(app, process.env.PORT);
 });

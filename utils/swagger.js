@@ -32,6 +32,7 @@ const options = {
   apis: [
     path.resolve(__dirname, "../routes/*.js"),
     path.resolve(__dirname, "../models/*.js"),
+    path.resolve(__dirname, "../sockets.js"),
   ],
 };
 
@@ -45,7 +46,7 @@ function swaggerDocs(app, port) {
     res.send(swaggerSpec);
   });
 
-  // console.log(`Docs available at http://localhost:${port}/docs`);
+  console.log(`Docs available at http://localhost:${port}/docs`);
 }
 
 export default swaggerDocs;

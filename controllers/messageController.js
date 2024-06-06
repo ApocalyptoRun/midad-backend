@@ -29,7 +29,7 @@ const addMessage = async (req, res) => {
 
     if (!req.file && messageType !== "text") {
       return res.status(400).send({ message: "Please upload a file" });
-    } 
+    }
 
     const imageUrl = (() => {
       switch (messageType) {
@@ -61,9 +61,31 @@ const addMessage = async (req, res) => {
   }
 };
 
+const getLastMessage = async (req, res) => {
+  try {
+    const senderId = req.user.id;
+    const { recepientId } = req.body;
+
+    const lastMessage = await messageModel
+      .findOne({
+        $or: [
+          { senderId: senderId, recepientId: recepientId },
+          { senderId: recepientId, recepientId: senderId },
+        ],
+      })
+      .sort({ timeStamp: -1 });
+
+    res.json(lastMessage);
+  } catch (error) {
+    console.log(`Error retrieving last message: ${error}`);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 
 export default {
   addMessage,
   getAllMessage,
+  getLastMessage,
 };
-

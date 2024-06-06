@@ -35,6 +35,22 @@ const getUsers = (req, res) => {
     });
 };
 
+const getUserById = (req, res) => {
+  const userId =  req.user.id;
+
+  UserModel.findById(userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res.status(200).json(user);
+    })
+    .catch((error) => {
+      console.log("Error retrieving user by id", error);
+      res.status(500).json({ message: "Error retrieving user" });
+    });
+};
+
 const compareContacts = async (req, res) => {
   try {
     const userContacts = req.body.phoneContacts;
@@ -48,9 +64,7 @@ const compareContacts = async (req, res) => {
       _id: { $ne: loggedInUserId },
       phoneNumber: { $in: normalizedContacts },
     });
-
-    console.log(matchedUsers);
-
+    
     res.json(matchedUsers);
   } catch (error) {
     console.error(`Error comparing contacts ${error}`);
@@ -61,4 +75,5 @@ export default {
   updateUserProfile,
   getUsers,
   compareContacts,
+  getUserById
 };

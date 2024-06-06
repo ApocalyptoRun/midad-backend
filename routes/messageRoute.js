@@ -5,6 +5,8 @@ import upload from '../middleware/multer-config.js';
 
 export const router = express.Router();
 
+router.post("/getLastMessage", validateToken, messageController.getLastMessage);
+
 /**
  * @swagger
  * '/message/addMessage':
@@ -74,3 +76,4 @@ router.post("/addMessage", validateToken, upload.single("file"), messageControll
  *       - bearerAuth: [] 
  */
 router.post("/messages", validateToken, messageController.getAllMessage);
+

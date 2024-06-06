@@ -20,6 +20,7 @@ export const router = express.Router();
  *       - bearerAuth: [] 
  */
 router.get("/users", validateToken, userController.getUsers);
+router.get("/getUserById", validateToken, userController.getUserById);
 
 
 /**

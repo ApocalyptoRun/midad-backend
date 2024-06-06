@@ -15,12 +15,11 @@ export const sendSms = (phoneNumber, otp) => {
       {
         destinations: [{ to: phoneNumber }],
         from: "Midad",
-        text: `Your verication code is : ${otp} 1yjtxcLngVz`,
+        text: `Your verication code is : ${otp} wtX2mn8T14v`, 
+        // text: `Your verication code is : ${otp} xLL+eizZw70`, 
       },
     ],
   };
-
-  // debug hash : xLL+eizZw70
 
   axios
     .post(url, messageData, { headers })
